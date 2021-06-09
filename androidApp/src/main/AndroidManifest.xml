@@ -3,6 +3,7 @@
     package="com.haydnjm.stocks.android">
 
     <application
+        android:name=".TriggersApplication"
         android:allowBackup="false"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">

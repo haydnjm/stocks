@@ -25,10 +25,18 @@ dependencies {
     // UI Tests
     androidTestImplementation("androidx.compose.ui:ui-test-junit4:${Versions.compose}")
 
+    // Tooling
+    implementation("androidx.compose.ui:ui-tooling:${Versions.compose}")
+
     implementation("com.google.android.material:material:1.3.0")
     implementation("androidx.appcompat:appcompat:1.2.0")
     implementation("androidx.constraintlayout:constraintlayout:2.0.4")
     implementation("androidx.activity:activity-compose:1.3.0-beta01")
+    implementation("androidx.navigation:navigation-compose:${Versions.composeNavigation}")
+
+    implementation(Koin.core)
+    implementation(Koin.android)
+    implementation(Koin.compose)
 
     implementation(project(":shared"))
 }
@@ -38,7 +46,7 @@ android {
     defaultConfig {
         applicationId = "com.haydnjm.stocks.android"
         minSdkVersion(21)
-        targetSdkVersion(30)
+        targetSdkVersion(29)
         versionCode = 1
         versionName = "1.0"
     }
