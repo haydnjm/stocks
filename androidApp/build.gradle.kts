@@ -4,8 +4,8 @@ plugins {
 }
 
 dependencies {
+    implementation("androidx.compose.compiler:compiler:${Versions.compose}")
 
-    add(org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME, "androidx.compose.compiler:compiler:${Versions.compose}")
     implementation("androidx.compose.ui:ui:${Versions.compose}")
     // Tooling support (Previews, etc.)
     implementation("androidx.compose.ui:ui-tooling:${Versions.compose}")
@@ -20,7 +20,7 @@ dependencies {
     implementation("androidx.compose.runtime:runtime-livedata:${Versions.compose}")
     implementation("androidx.compose.runtime:runtime-rxjava2:${Versions.compose}")
 
-    implementation("androidx.activity:activity-ktx:1.2.3")
+    implementation("androidx.activity:activity-ktx:${Versions.activity}")
 
     // UI Tests
     androidTestImplementation("androidx.compose.ui:ui-test-junit4:${Versions.compose}")
@@ -31,7 +31,7 @@ dependencies {
     implementation("com.google.android.material:material:1.3.0")
     implementation("androidx.appcompat:appcompat:1.2.0")
     implementation("androidx.constraintlayout:constraintlayout:2.0.4")
-    implementation("androidx.activity:activity-compose:1.3.0-beta01")
+    implementation("androidx.activity:activity-compose:${Versions.activityCompose}")
     implementation("androidx.navigation:navigation-compose:${Versions.composeNavigation}")
 
     implementation(Koin.core)

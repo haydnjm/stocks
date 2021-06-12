@@ -1,8 +1,10 @@
 object Versions {
     const val kotlin = "1.5.10"
+    const val activity = "1.2.3"
     const val compose = "1.0.0-beta08"
+    const val activityCompose = "1.3.0-beta01"
     const val composeNavigation = "2.4.0-alpha02"
-    const val koin = "3.0.1"
+    const val koin = "3.1.0"
 }
 
 object Koin {

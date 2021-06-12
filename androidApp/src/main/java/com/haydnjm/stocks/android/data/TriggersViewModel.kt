@@ -1,5 +1,6 @@
 package com.haydnjm.stocks.android.data
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -27,9 +28,15 @@ class TriggersViewModel: ViewModel() {
 
     var triggers by mutableStateOf(initialTriggers)
         private set
+    var editing by mutableStateOf(-1)
 
     fun addTrigger(trigger: Trigger) {
         triggers = triggers + listOf(trigger)
+    }
+
+    fun setEditingPosition(index: Int) {
+        Log.i("DEBUG_VIEW_MODEL", "$index, $editing")
+        editing = index
     }
 
     fun removeTrigger() {}
