@@ -29,14 +29,18 @@ class TriggersViewModel: ViewModel() {
     var triggers by mutableStateOf(initialTriggers)
         private set
     var editing by mutableStateOf(-1)
+    var adding by mutableStateOf(false)
 
     fun addTrigger(trigger: Trigger) {
         triggers = triggers + listOf(trigger)
     }
 
     fun setEditingPosition(index: Int) {
-        Log.i("DEBUG_VIEW_MODEL", "$index, $editing")
         editing = index
+    }
+
+    fun setAddingState(newState: Boolean) {
+        adding = newState
     }
 
     fun removeTrigger() {}

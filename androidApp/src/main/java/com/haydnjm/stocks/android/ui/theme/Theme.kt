@@ -13,7 +13,7 @@ private val LightThemeColors = lightColors(
     secondary = green500,
     secondaryVariant = green300,
     surface = blue900,
-    onSurface = blue500,
+    onSurface = blue100,
 )
 
 private val DarkThemeColours = darkColors()
@@ -32,6 +32,7 @@ fun StocksTheme(
 ) {
     MaterialTheme(
         colors = if(darkTheme) DarkThemeColours else LightThemeColors,
+        typography = StocksTypography,
         content = content,
     )
 }
