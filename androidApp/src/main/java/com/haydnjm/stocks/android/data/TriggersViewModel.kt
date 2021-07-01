@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 
-val initialTriggers = listOf(
+val initialTriggers = mutableListOf<Trigger>(
     Trigger(
         timePeriod = 14,
         valueDelta = 20,
@@ -32,7 +32,7 @@ class TriggersViewModel: ViewModel() {
     var adding by mutableStateOf(false)
 
     fun addTrigger(trigger: Trigger) {
-        triggers = triggers + listOf(trigger)
+        triggers.add(trigger)
     }
 
     fun setEditingPosition(index: Int) {
@@ -44,5 +44,8 @@ class TriggersViewModel: ViewModel() {
     }
 
     fun removeTrigger() {}
-    fun editTrigger() {}
+    fun editTrigger(index: Int, newTrigger: Trigger) {
+        Log.i("EDITING LIST", "$index - $newTrigger")
+        triggers[index] = newTrigger
+    }
 }
