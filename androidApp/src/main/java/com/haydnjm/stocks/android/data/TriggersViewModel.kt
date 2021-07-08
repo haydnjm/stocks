@@ -5,22 +5,27 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.haydnjm.stocks.repository.TriggersRepository
+import com.haydnjm.stocks.remote.Stock
 
 val initialTriggers = mutableListOf<Trigger>(
     Trigger(
         timePeriod = 14,
         valueDelta = 20,
-        stock = Stock.Apple
+        stockName = "Apple",
+        stockTicker = "[TEST1]"
     ),
     Trigger(
         timePeriod = 28,
         valueDelta = 5,
-        stock = Stock.Google
+        stockName = "Google",
+        stockTicker = "[TEST2]"
     ),
     Trigger(
         timePeriod = 3,
         valueDelta = 50,
-        stock = Stock.GameStop
+        stockName = "GameStop",
+        stockTicker = "[TEST3]"
     ),
 )
 
@@ -30,6 +35,9 @@ class TriggersViewModel: ViewModel() {
         private set
     var editing by mutableStateOf(-1)
     var adding by mutableStateOf(false)
+    private var triggersRepository: TriggersRepository = TriggersRepository()
+    var newStockOptions by mutableStateOf(listOf<Stock>())
+
 
     fun addTrigger(trigger: Trigger) {
         triggers.add(trigger)
@@ -45,7 +53,14 @@ class TriggersViewModel: ViewModel() {
 
     fun removeTrigger() {}
     fun editTrigger(index: Int, newTrigger: Trigger) {
-        Log.i("EDITING LIST", "$index - $newTrigger")
+        Log.i("LOGGR", "$index - $newTrigger")
         triggers[index] = newTrigger
+    }
+
+    fun getNasdaq(search: String?) {
+        Log.i("LOGGR", "view model")
+        triggersRepository.getNasdaq(search) {
+            newStockOptions = it
+        }
     }
 }

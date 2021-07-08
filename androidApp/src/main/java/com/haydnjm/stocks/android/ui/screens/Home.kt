@@ -5,7 +5,10 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -16,14 +19,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.haydnjm.stocks.android.data.Trigger
-import com.haydnjm.stocks.android.data.TriggersViewModel
-import com.haydnjm.stocks.android.data.initialTriggers
 import com.haydnjm.stocks.android.ui.theme.Padding
 import org.koin.androidx.compose.getViewModel
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
-import com.haydnjm.stocks.android.data.Stock
+import com.haydnjm.stocks.android.data.*
 
 @Composable
 fun Home() {
@@ -128,7 +128,7 @@ fun TriggerList(
                     .padding(vertical = Padding.small)
             ) {
                 Text(
-                    text = trigger.stock.toString(),
+                    text = trigger.stockName.substringBefore(" - "),
                     style = MaterialTheme.typography.h6,
                     modifier = Modifier.weight(2f)
                 )
@@ -183,12 +183,17 @@ fun TriggerForm(
     handleSubmit: (trigger: Trigger) -> Unit,
     close: () -> Unit
 ) {
-    var priceDelta = remember {
+    val viewModel = getViewModel<TriggersViewModel>()
+    val priceDelta = remember {
         mutableStateOf<String>(trigger?.valueDelta?.toString() ?: "0")
     }
-    var timeDelta = remember {
+    val timeDelta = remember {
         mutableStateOf<String>(trigger?.timePeriod?.toString() ?: "0")
     }
+    val ticker = remember {
+        mutableStateOf<String>(trigger?.stockTicker ?: "")
+    }
+    val stockName = viewModel.newStockOptions.find { it.symbol == ticker.value }?.name ?: ""
     Surface(
         modifier = Modifier
             .fillMaxSize()
@@ -213,42 +218,86 @@ fun TriggerForm(
                         Text(text = "Close")
                     }
                 }
+                if (stockName != "") {
+                    Text(
+                        text = stockName,
+                        style = MaterialTheme.typography.h5
+                    )
+                    TriggerPropertyInput(
+                        label = "Price delta (%)",
+                        value = priceDelta.value
+                    ) { output ->
+                        priceDelta.value = output.filter { it.isDigit() }
+                    }
+                    TriggerPropertyInput(label = "Time delta (days)", value = timeDelta.value) { output ->
+                        timeDelta.value = output.filter { it.isDigit() }
+                    }
 
-                Text(
-                    text = trigger?.stock.toString() ?: "// TODO: Stock selector",
-                    style = MaterialTheme.typography.h5
-                )
+                    // Submit button
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.End
+                    ) {
+                        Button(
+                            onClick = {
 
-                TriggerPropertyInput(label = "Price delta", value = priceDelta.value) { output ->
-                    Log.i("UPDATE PRICE", output)
-                    priceDelta.value = output.filter { it.isDigit() }
-                }
-                TriggerPropertyInput(label = "Time delta", value = timeDelta.value) { output ->
-                    Log.i("UPDATE TIME", output)
-                    timeDelta.value = output.filter { it.isDigit() }
+                                if (priceDelta.value != "" && timeDelta.value != "" && stockName != "") {
+                                    handleSubmit(
+                                        Trigger(
+                                            timePeriod = timeDelta.value.toInt(),
+                                            valueDelta = priceDelta.value.toInt(),
+                                            stockTicker = ticker.value,
+                                            stockName = stockName
+                                        )
+                                    )
+                                }
+                            },
+                            modifier = Modifier.padding(Padding.medium)
+                        ) {
+                            Text("Save", style = MaterialTheme.typography.h5)
+                        }
+                    }
+                } else {
+                    StockSelector {
+                        ticker.value = it
+                    }
                 }
             }
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.End
-            ) {
-                Button(
-                    onClick = {
-                        if (priceDelta.value != "" && timeDelta.value != "") {
-                            handleSubmit(
-                                Trigger(
-                                    timePeriod = timeDelta.value.toInt(),
-                                    valueDelta = priceDelta.value.toInt(),
-                                    stock = trigger?.stock
-                                        ?: Stock.LuluLemon, // TODO: this is an enum atm
-                                )
-                            )
+        }
+    }
+}
+
+@Composable
+fun StockSelector(
+    handleSelect: (String) -> Unit
+) {
+
+    val triggersViewModel = getViewModel<TriggersViewModel>()
+    val search = remember { mutableStateOf("") }
+
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        TextField(
+            value = search.value,
+            onValueChange = { value ->
+                search.value = value
+                triggersViewModel.getNasdaq(search.value)
+            }
+        )
+        LazyColumn{
+            items(triggersViewModel.newStockOptions) { stock ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = Padding.medium, bottom = Padding.medium)
+                        .clickable {
+                            handleSelect(stock.symbol)
                         }
-                    },
-                    modifier = Modifier.padding(Padding.medium)
                 ) {
-                    Text("Save", style = MaterialTheme.typography.h5)
+                    Text(text = "[${stock.symbol}] - ${stock.name.substringBefore(" - ")}")
                 }
+                Divider()
             }
         }
     }
@@ -261,6 +310,10 @@ fun TriggerPropertyInput(
     value: String,
     onValueChange: (String) -> Unit,
 ) {
+    fun increment(input: String, direction: Int): String {
+        val num = input.toInt()
+        return (num + direction).toString()
+    }
     Row(
         modifier = modifier
             .padding(top = Padding.small, bottom = Padding.small)
@@ -270,7 +323,7 @@ fun TriggerPropertyInput(
     ) {
         Text(text = label, style = MaterialTheme.typography.subtitle1)
         Row {
-            Button(onClick = { /*TODO*/ }) {
+            Button(onClick = { onValueChange(increment(value, -1)) }) {
                 Text(
                     text = "-",
                     style = MaterialTheme.typography.h4
@@ -286,7 +339,7 @@ fun TriggerPropertyInput(
                 value = value,
                 onValueChange = onValueChange,
             )
-            Button(onClick = { /*TODO*/ }) {
+            Button(onClick = { onValueChange(increment(value, 1)) }) {
                 Text(
                     text = "+",
                     style = MaterialTheme.typography.h4
@@ -353,7 +406,7 @@ private fun TriggerListPreview() {
 @Composable
 private fun TriggerFormPreview() {
     TriggerForm(
-        null,
-        { trigger -> Log.i("TRIGGER", trigger.toString()) }
+        trigger = null,
+        { trigger -> Log.i("LOGGR", trigger.toString()) }
     ) { }
 }

@@ -5,6 +5,7 @@ plugins {
     kotlin("multiplatform")
     kotlin("native.cocoapods")
     id("com.android.library")
+    id("kotlinx-serialization")
 }
 
 version = "1.0"
@@ -61,14 +62,31 @@ kotlin {
     }
 
     sourceSets {
-        val commonMain by getting
+        val commonMain by getting {
+            dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.kotlinCoroutines}")
+
+                // Ktor
+                implementation(Ktor.clientCore)
+                implementation(Ktor.clientJson)
+                implementation(Ktor.clientLogging)
+                implementation(Ktor.clientSerialization)
+
+                // Kotlinx Serialization
+                implementation(Serialization.core)
+            }
+        }
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
             }
         }
-        val androidMain by getting
+        val androidMain by getting {
+            dependencies {
+                implementation(Ktor.clientAndroid)
+            }
+        }
         val androidTest by getting {
             dependencies {
                 implementation(kotlin("test-junit"))
