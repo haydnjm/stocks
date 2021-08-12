@@ -19,17 +19,9 @@ data class Stock(
 )
 
 class TriggersApi(
+    private val client: HttpClient = Client,
     private val baseUrl: String = Constants.HOST
 ) {
-
-    // TODO: Make client each time an API is created?
-    private val nonStrictJson =
-        kotlinx.serialization.json.Json { isLenient = true; ignoreUnknownKeys = true }
-    private val client = HttpClient {
-        install(JsonFeature) {
-            serializer = KotlinxSerializer(nonStrictJson)
-        }
-    }
 
     suspend fun getNasdaq(search: String? = ""): List<Stock> {
         return client.get("$baseUrl/get-nasdaq?search=${search ?: ""}")

@@ -1,0 +1,13 @@
+CREATE TABLE Session(
+id TEXT NOT NULL,
+expiration INTEGER NOT NULL
+);
+
+saveSession:
+INSERT OR REPLACE INTO Session(id, expiration)VALUES(?, ?);
+
+getSession:
+SELECT * FROM Session LIMIT 1;
+
+removeSessions:
+DELETE FROM Session;

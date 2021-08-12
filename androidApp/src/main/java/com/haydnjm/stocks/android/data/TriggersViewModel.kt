@@ -5,6 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.haydnjm.stocks.auth.AuthRepository
 import com.haydnjm.stocks.repository.TriggersRepository
 import com.haydnjm.stocks.remote.Stock
 
@@ -31,13 +32,18 @@ val initialTriggers = mutableListOf<Trigger>(
 
 class TriggersViewModel: ViewModel() {
 
+    private var triggersRepository: TriggersRepository = TriggersRepository()
+
     var triggers by mutableStateOf(initialTriggers)
         private set
     var editing by mutableStateOf(-1)
     var adding by mutableStateOf(false)
-    private var triggersRepository: TriggersRepository = TriggersRepository()
     var newStockOptions by mutableStateOf(listOf<Stock>())
+    var sessionId by mutableStateOf("")
 
+//    fun getSession() {
+//        session = authRepository
+//    }
 
     fun addTrigger(trigger: Trigger) {
         triggers.add(trigger)

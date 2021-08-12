@@ -8,6 +8,8 @@ object Versions {
     const val kotlinCoroutines = "1.4.3-native-mt"
     const val ktor = "1.5.3"
     const val kotlinxSerialization = "1.1.0"
+    const val sqlDelight = "1.5.0"
+    const val kermit = "0.1.9"
 }
 
 object Koin {
@@ -29,3 +31,18 @@ object Ktor {
 object Serialization {
     val core = "org.jetbrains.kotlinx:kotlinx-serialization-core:${Versions.kotlinxSerialization}"
 }
+
+object Deps {
+    const val kermit = "co.touchlab:kermit:${Versions.kermit}"
+}
+
+object SqlDelight {
+    val runtime = "com.squareup.sqldelight:runtime:${Versions.sqlDelight}"
+    val coroutineExtensions = "com.squareup.sqldelight:coroutines-extensions:${Versions.sqlDelight}"
+    val androidDriver = "com.squareup.sqldelight:android-driver:${Versions.sqlDelight}"
+    val nativeDriver = "com.squareup.sqldelight:native-driver:${Versions.sqlDelight}"
+//    val nativeDriverMacos = "com.squareup.sqldelight:native-driver-macosx64:${Versions.sqlDelight}"
+//    val jdbcDriver = "org.xerial:sqlite-jdbc:${Versions.sqliteJdbcDriver}"
+//    val sqlliteDriver = "com.squareup.sqldelight:sqlite-driver:${Versions.sqlDelight}"
+}
+

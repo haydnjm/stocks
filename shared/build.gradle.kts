@@ -5,6 +5,7 @@ plugins {
     kotlin("multiplatform")
     kotlin("native.cocoapods")
     id("com.android.library")
+    id("com.squareup.sqldelight")
     id("kotlinx-serialization")
 }
 
@@ -74,6 +75,13 @@ kotlin {
 
                 // Kotlinx Serialization
                 implementation(Serialization.core)
+
+                // SQL Delight
+                implementation(SqlDelight.runtime)
+                implementation(SqlDelight.coroutineExtensions)
+
+                // Kermit
+                api(Deps.kermit)
             }
         }
         val commonTest by getting {
@@ -85,6 +93,7 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 implementation(Ktor.clientAndroid)
+                implementation(SqlDelight.androidDriver)
             }
         }
         val androidTest by getting {
@@ -93,7 +102,18 @@ kotlin {
                 implementation("junit:junit:4.13.2")
             }
         }
-        val iOSMain by getting
+        val iOSMain by getting {
+            dependencies {
+                implementation(SqlDelight.nativeDriver)
+            }
+        }
         val iOSTest by getting
+    }
+}
+
+sqldelight {
+    database("TriggersDatabase") {
+        packageName = "com.haydnjm.db"
+        sourceFolders = listOf("sqldelight")
     }
 }
